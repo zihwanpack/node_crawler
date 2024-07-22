@@ -17,6 +17,6 @@ import { extractProductData } from './crawlingProductData.js';
   await page.waitForSelector(selector, { timeout: 600000 }); // 셀렉터 대기 시간을 60초로 변경
 
   const itemElements = await page.$$(selector);
-
+  console.log(itemElements);
   await browser.close();
 })();
