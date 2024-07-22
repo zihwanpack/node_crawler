@@ -1,14 +1,12 @@
 import puppeteer from 'puppeteer';
 import fs from 'fs';
 
-(async () => {
+async function extractProductData(url) {
   try {
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
 
-    await page.goto(
-      'https://mpglobal.donki.com/ec-web/d/gd?gId=I2021062302901&toComments=false?lan=ko-kr'
-    );
+    await page.goto(url);
 
     // 메타 태그 정보 수집
     const productName = await page.title();
@@ -50,4 +48,6 @@ import fs from 'fs';
   } catch (err) {
     console.log(err);
   }
-})();
+}
+
+export { extractProductData };
