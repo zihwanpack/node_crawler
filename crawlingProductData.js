@@ -6,7 +6,7 @@ async function extractProductData(url) {
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
 
-    await page.goto(url);
+    await page.goto(url, { waitUntil: 'networkidle0' });
 
     // 메타 태그 정보 수집
     const productName = await page.title();
@@ -15,6 +15,7 @@ async function extractProductData(url) {
     );
 
     const productPrice = await page.$eval('.jpPrice', (ele) => ele.textContent);
+
     const productWonPrice = await page.$eval(
       '.price',
       (ele) => ele.textContent
@@ -26,13 +27,7 @@ async function extractProductData(url) {
     );
 
     // JSON 파일 저장
-    console.log(
-      description,
-      productName,
-      productPrice,
-      productWonPrice,
-      imageUrl
-    );
+    console.log(productName);
 
     const outputJSON = JSON.stringify({
       description,
@@ -42,9 +37,11 @@ async function extractProductData(url) {
       imageUrl,
     });
 
-    fs.writeFileSync('product_data.json', outputJSON);
-
-    await browser.close();
+    if (!fs.existsSync('product_data.json')) {
+      fs.writeFileSync('product_data.json', outputJSON);
+    } else {
+      fs.appendFileSync('./product_data.json', outputJSON);
+    }
   } catch (err) {
     console.log(err);
   }
