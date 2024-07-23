@@ -7,6 +7,7 @@ export async function scrapeURLs(urlData) {
       timeout: 600000,
       waitUntil: 'networkidle0',
     });
+
     const scrapingPromises = urlData.map(async (url) => {
       const page = await browser.newPage();
       await page.goto(url);
@@ -47,3 +48,5 @@ export async function scrapeURLs(urlData) {
     console.log(err);
   }
 }
+
+scrapeURLs(urlData);
