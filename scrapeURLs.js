@@ -48,5 +48,3 @@ export async function scrapeURLs(urlData) {
     console.log(err);
   }
 }
-
-scrapeURLs(urlData);
