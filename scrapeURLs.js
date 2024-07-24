@@ -1,16 +1,16 @@
 import puppeteer from 'puppeteer';
 import fs from 'fs';
 
-export async function scrapeURLs(urlData) {
+export async function scrapeURLs(fileName, urlData) {
   try {
     const browser = await puppeteer.launch({
-      timeout: 600000,
+      timeout: 60000,
       waitUntil: 'networkidle0',
     });
 
     const scrapingPromises = urlData.map(async (url) => {
       const page = await browser.newPage();
-      await page.goto(url);
+      await page.goto(url, { waitUntil: 'networkidle0', timeout: 60000 });
 
       // 메타 태그 정보 수집
       const productName = await page.title();
@@ -41,7 +41,19 @@ export async function scrapeURLs(urlData) {
 
     const scrapedDataArr = await Promise.all(scrapingPromises);
 
-    fs.writeFileSync('product_data.json', JSON.stringify(scrapedDataArr));
+    try {
+      if (fs.existsSync(`${fileName}.json`)) {
+        const existingData = JSON.parse(
+          fs.readFileSync(`${fileName}.json`, 'utf8')
+        );
+        const newData = existingData.concat(scrapedDataArr);
+        fs.writeFileSync(`${fileName}.json`, JSON.stringify(newData));
+      } else {
+        fs.writeFileSync(`${fileName}.json`, JSON.stringify(scrapedDataArr));
+      }
+    } catch (error) {
+      console.error('Error writing to file:', error);
+    }
 
     await browser.close();
   } catch (err) {
