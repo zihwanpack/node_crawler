@@ -1,5 +1,7 @@
 import fs from 'fs';
 
+const filePath = './cosmetic_data.json';
+
 const testJsonFile = (filePath) => {
   fs.readFile(filePath, 'utf8', (err, data) => {
     if (err) {
@@ -15,4 +17,7 @@ const testJsonFile = (filePath) => {
     }
   });
 };
+
+testJsonFile(filePath);
+
 export { testJsonFile };

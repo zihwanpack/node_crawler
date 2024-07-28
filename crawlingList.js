@@ -1,6 +1,5 @@
 import puppeteer from 'puppeteer';
 import { scrapeURLs } from './scrapeURLs.js';
-import { testJsonFile } from './test.js';
 
 (async () => {
   const urlData = [];
@@ -9,17 +8,19 @@ import { testJsonFile } from './test.js';
   });
   // 원하는 페이지 url
   const pageUrl =
-    'https://mpglobal.donki.com/ec-web/d/pcd?titleStr=7Iud7ZKI&gpId=g-i_b_food?lan=ko-kr';
+    'https://mpglobal.donki.com/ec-web/d/pcd?titleStr=67CU65SU44O77Zek7Ja07LyA7Ja0&gpId=g-i_b_skincare?lan=ko-kr';
   // 원하는 데이터 파일명
-  const fileName = 'food_data';
+  const fileName = 'cosmetic_data';
   const selector = '.goods-item';
 
   const page = await browser.newPage();
   await page.setViewport({
     width: 1280,
-    height: 720,
+    height: 1000,
+    // height: 2000,
     deviceScaleFactor: 1,
   });
+
   page.setDefaultNavigationTimeout(0);
 
   try {
@@ -33,6 +34,7 @@ import { testJsonFile } from './test.js';
       const newPagePromise = new Promise((resolve) =>
         browser.once('targetcreated', (target) => resolve(target.page()))
       );
+
       await div.click();
       const newPage = await newPagePromise;
       await newPage.waitForNavigation();
@@ -44,7 +46,6 @@ import { testJsonFile } from './test.js';
     }
     // url에서 정보 긁어오기
     await scrapeURLs(fileName, urlData);
-    await testJsonFile(`${fileName}.json`);
   } catch (error) {
     console.error('Error:', error);
   } finally {

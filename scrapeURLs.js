@@ -1,7 +1,9 @@
 import puppeteer from 'puppeteer';
 import fs from 'fs';
+import { testJsonFile } from './test.js';
 
 export async function scrapeURLs(fileName, urlData) {
+  const filePath = `${fileName}.json`;
   try {
     const browser = await puppeteer.launch({
       timeout: 60000,
@@ -10,6 +12,7 @@ export async function scrapeURLs(fileName, urlData) {
 
     const scrapingPromises = urlData.map(async (url) => {
       const page = await browser.newPage();
+
       await page.goto(url, { waitUntil: 'networkidle0', timeout: 60000 });
 
       // 메타 태그 정보 수집
@@ -18,10 +21,11 @@ export async function scrapeURLs(fileName, urlData) {
         ele.getAttribute('content')
       );
 
-      const productPrice = await page.$eval('.jpPrice', (ele) =>
+      const productWonPrice = await page.$eval('.jpPrice', (ele) =>
         ele.textContent.trim()
       );
-      const productWonPrice = await page.$eval('.price', (ele) =>
+      productPrice;
+      const productPrice = await page.$eval('.price', (ele) =>
         ele.textContent.trim()
       );
 
@@ -42,14 +46,14 @@ export async function scrapeURLs(fileName, urlData) {
     const scrapedDataArr = await Promise.all(scrapingPromises);
 
     try {
-      if (fs.existsSync(`${fileName}.json`)) {
-        const existingData = JSON.parse(
-          fs.readFileSync(`${fileName}.json`, 'utf8')
-        );
+      if (fs.existsSync(filePath)) {
+        const existingData = JSON.parse(fs.readFileSync(filePath, 'utf8'));
         const newData = existingData.concat(scrapedDataArr);
-        fs.writeFileSync(`${fileName}.json`, JSON.stringify(newData));
+        fs.writeFileSync(filePath, JSON.stringify(newData));
+        testJsonFile(filePath);
       } else {
         fs.writeFileSync(`${fileName}.json`, JSON.stringify(scrapedDataArr));
+        testJsonFile(filePath);
       }
     } catch (error) {
       console.error('Error writing to file:', error);
