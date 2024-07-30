@@ -16,30 +16,35 @@ export async function scrapeURLs(fileName, urlData) {
       await page.goto(url, { waitUntil: 'networkidle0', timeout: 60000 });
 
       // 메타 태그 정보 수집
-      const productName = await page.title();
+      const name = await page.title();
       const description = await page.$eval('meta[name="description"]', (ele) =>
         ele.getAttribute('content')
       );
 
-      const productWonPrice = await page.$eval('.jpPrice', (ele) =>
+      const won_price = await page.$eval('.jpPrice', (ele) =>
         ele.textContent.trim()
       );
-      productPrice;
-      const productPrice = await page.$eval('.price', (ele) =>
+
+      const en_price = await page.$eval('.price', (ele) =>
         ele.textContent.trim()
       );
 
       // 이미지 추출
-      const imageUrl = await page.$eval('.defaultImg', (ele) =>
+      const image = await page.$eval('.defaultImg', (ele) =>
         ele.getAttribute('src')
       );
 
+      const product_type = fileName.split('_')[0];
+      const sales_area = '일본';
+
       return {
-        productName,
+        name,
         description,
-        productPrice,
-        productWonPrice,
-        imageUrl,
+        en_price,
+        won_price,
+        image,
+        product_type,
+        sales_area,
       };
     });
 
