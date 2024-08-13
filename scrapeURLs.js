@@ -2,7 +2,12 @@ import puppeteer from 'puppeteer';
 import fs from 'fs';
 import { testJsonFile } from './test.js';
 
-export async function scrapeURLs(fileName, urlData) {
+export async function scrapeURLs(
+  fileName,
+  urlData,
+  main_category,
+  sub_category
+) {
   const filePath = `${fileName}.json`;
   try {
     const browser = await puppeteer.launch({
@@ -34,7 +39,6 @@ export async function scrapeURLs(fileName, urlData) {
         ele.getAttribute('src')
       );
 
-      const product_type = fileName.split('_')[0];
       const sales_area = '일본';
 
       return {
@@ -43,13 +47,14 @@ export async function scrapeURLs(fileName, urlData) {
         en_price,
         won_price,
         image,
-        product_type,
         sales_area,
+        main_category,
+        sub_category,
       };
     });
 
     const scrapedDataArr = await Promise.all(scrapingPromises);
-
+    console.log(scrapedDataArr.length);
     try {
       if (fs.existsSync(filePath)) {
         const existingData = JSON.parse(fs.readFileSync(filePath, 'utf8'));

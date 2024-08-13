@@ -1,6 +1,6 @@
 import fs from 'fs';
 
-const filePath = './medicine_data.json';
+const filePath = './product_data.json';
 
 const testJsonFile = (filePath) => {
   fs.readFile(filePath, 'utf8', (err, data) => {
